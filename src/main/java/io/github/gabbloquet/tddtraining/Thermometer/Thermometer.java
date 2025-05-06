@@ -1,22 +1,28 @@
 package io.github.gabbloquet.tddtraining.Thermometer;
 
 public record Thermometer(int[] temperatures) {
+  public Thermometer {
+    checkThreshold(temperatures);
+  }
 
   public int getClosestTemperatureToZero() {
-    if (this.temperatures.length == 0 || this.temperatures.length > 10000)
+    if (temperatures.length == 0) {
       return 0;
-
-    int temperatureClosestToZero = this.temperatures[0];
-
+    }
+    int temperateClosestToZero = temperatures[0];
     for (int temperature : temperatures) {
       int distance = Math.abs(temperature);
-
-      if (distance < Math.abs(temperatureClosestToZero))
-        temperatureClosestToZero = temperature;
-      else if (temperature > 0 && distance <= Math.abs(temperatureClosestToZero))
-        temperatureClosestToZero = temperature;
+      if(Math.abs(temperateClosestToZero) > distance && temperateClosestToZero != distance) {
+        temperateClosestToZero = temperature;
+      }
     }
+    return temperateClosestToZero;
+  }
 
-    return temperatureClosestToZero;
+
+  private static void checkThreshold(int[] temperatures) {
+    if (temperatures == null || temperatures.length > 10000){
+      throw new IllegalArgumentException("Thermometer cannot have more than 10000 temperatures");
+    }
   }
 }

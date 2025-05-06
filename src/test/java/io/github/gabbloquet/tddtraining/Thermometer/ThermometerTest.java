@@ -1,57 +1,93 @@
 package io.github.gabbloquet.tddtraining.Thermometer;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class ThermometerTest {
 
-  @Test
-  void should_return_0_if_empty() {
-    int[] temperatures = {};
+    @Test
+    public void shouldReturnZeroWhenNoTemperatures() {
+        //Given
+        var temperatures = new int[]{};
 
-    Thermometer thermometer = new Thermometer(temperatures);
+        //When
+        var result = new Thermometer(temperatures).getClosestTemperatureToZero();
 
-    Assertions.assertEquals(0, thermometer.getClosestTemperatureToZero());
-  }
-
-  @Test
-  void should_return_0_if_more_than_10000_entries() {
-    int[] temperatures = new int[10001];
-
-    for(int i = 1; i <= 10001; i++){
-      temperatures[i - 1] = i;
+        //Then
+        assertThat(result).isEqualTo(0);
     }
 
-    Thermometer thermometer = new Thermometer(temperatures);
+    @Test
+    public void shouldThrowExceptionWhenTemperatesSizeExceedsThreshold() {
+        //Given
+        var temperatures = new int[10001];
 
-    Assertions.assertEquals(0, thermometer.getClosestTemperatureToZero());
-  }
+        //When /Then
+        assertThatThrownBy(() -> new Thermometer(temperatures).getClosestTemperatureToZero())
+                .isInstanceOf(IllegalArgumentException.class);
+    }
 
-  @Test
-  void should_return_the_positive_temperature_closest_to_zero() {
-    int[] temperatures = { 4, 2, 5 };
+    @Test
+    public void shouldReturnClosestTemperatureToZeroWithOneTemperature() {
+        //Given
+        var temperatures = new int[]{2};
 
-    Thermometer thermometer = new Thermometer(temperatures);
+        //When
+        var result = new Thermometer(temperatures).getClosestTemperatureToZero();
 
-    Assertions.assertEquals(2, thermometer.getClosestTemperatureToZero());
-  }
+        //Then
+        assertThat(result).isEqualTo(2);
+    }
 
-  @Test
-  void should_return_the_negative_temperature_closest_to_zero() {
-    int[] temperatures = { 4, 2, -5, -1 };
+    @Test
+    public void shouldReturnClosestTemperatureToZeroWithPositiveTemperatures() {
+        //Given
+        var temperatures = new int[]{2, 9, 1};
 
-    Thermometer thermometer = new Thermometer(temperatures);
+        //When
+        var result = new Thermometer(temperatures).getClosestTemperatureToZero();
 
-    Assertions.assertEquals(-1, thermometer.getClosestTemperatureToZero());
-  }
+        //Then
+        assertThat(result).isEqualTo(1);
+    }
 
-  @Test
-  void should_prefer_the_positive_temperature_if_distance_is_the_same() {
-    int[] temperatures = { 4, 2, 5, -2, 1, -1 };
+    @Test
+    public void shouldReturnClosestTemperatureToZeroWithOneNegativeTemperature() {
+        //Given
+        var temperatures = new int[]{2, 9, -1};
 
-    Thermometer thermometer = new Thermometer(temperatures);
+        //When
+        var result = new Thermometer(temperatures).getClosestTemperatureToZero();
 
-    Assertions.assertEquals(1, thermometer.getClosestTemperatureToZero());
-  }
+        //Then
+        assertThat(result).isEqualTo(-1);
+    }
 
+
+    @Test
+    public void shouldReturnClosestTemperatureToZeroWithNegativeTemperatures() {
+        //Given
+        var temperatures = new int[]{1, 9, -2, -3};
+
+        //When
+        var result = new Thermometer(temperatures).getClosestTemperatureToZero();
+
+        //Then
+        assertThat(result).isEqualTo(1);
+    }
+
+    @Test
+    public void shouldPreferPositiveTemperatureClosestToZero() {
+        //Given
+        var temperatures = new int[]{2, 9, -2, -3};
+
+        //When
+        var result = new Thermometer(temperatures).getClosestTemperatureToZero();
+
+        //Then
+        assertThat(result).isEqualTo(2);
+    }
 }
+
